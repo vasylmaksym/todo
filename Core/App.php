@@ -17,7 +17,7 @@ class App
     public static function run()
     {
         try {
-            $path = $_SERVER['REQUEST_URI'];
+            $path = explode('?', $_SERVER['REQUEST_URI'])[0];
             $method = strtolower($_SERVER['REQUEST_METHOD']);
 
             if (!empty($routes = Router::$routes[$method]) && !empty($controller_action_str = $routes[$path])) {
