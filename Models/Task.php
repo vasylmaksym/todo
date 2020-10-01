@@ -31,7 +31,7 @@ class Task extends DB
             }
         }
 
-        $query = "SELECT name, text, done FROM {$this->table} {$order_by} LIMIT {$limit} OFFSET {$offset}";
+        $query = "SELECT id, name, text, done FROM {$this->table} {$order_by} LIMIT {$limit} OFFSET {$offset}";
         $res = $this->connect()->query($query);
         if ($res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
