@@ -67,4 +67,10 @@ class Task extends DB
         $query = "INSERT INTO {$this->table} (name, email, text) VALUES ('{$name}', '{$email}', '{$text}')";
         return $this->connect()->query($query);
     }
+
+    public function update($id, $text, $status)
+    {
+        $query = "UPDATE `{$this->table}` SET `text` = '{$text}', `status` = '{$status}' WHERE `id` = '{$id}'";
+        return $this->connect()->query($query);
+    }
 }

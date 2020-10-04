@@ -10,23 +10,62 @@
                             <div class="card-body">
                                 <h4 class="card-title">LIST</h4>
                                 <div class="list-wrapper">
-                                    <ul class="d-flex flex-column-reverse todo-list">
-                                        <?php foreach ($data as $item): ?>
-                                            <li class="<?= $item['done'] ? 'completed' : ''; ?> todoItem"
-                                                data-id="<?= $item['id'] ?>">
-                                                <div class="form-check">
-                                                    <label class="form-check-label">
-                                                        <input class="checkbox"
-                                                               type="checkbox" <?= $item['done'] ? 'checked' : ''; ?>>
-                                                        For what reason would it be advisable.
-                                                        <i class="input-helper"></i>
-                                                    </label>
-                                                </div>
-                                                <i class="remove mdi mdi-close-circle-outline"></i>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
+                                    <?php if (!empty($data)): ?>
+                                        <form class="editForm" action="/update" method="post" hidden>
+                                            <input class="idInput" type="hidden" name="id" value="">
+                                            <input class="textInput" type="hidden" name="text" value="">
+                                            <input class="statusInput" type="hidden" name="status" value="">
+                                        </form>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">id</th>
+                                                <th scope="col">name</th>
+                                                <th scope="col">email</th>
+                                                <th scope="col">text</th>
+                                                <th scope="col">closed</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach ($data as $item): ?>
+                                                <tr data-id="<?= $item->id ?>">
+                                                    <th scope="row"><?= $item->id ?></th>
+                                                    <td><?= $item->name ?></td>
+                                                    <td><?= $item->email ?></td>
+                                                    <td data-val="<?= $item->text ?>"
+                                                        class="textField"><?= $item->text ?></td>
+                                                    <td>
+                                                        <input class="statusField"
+                                                               type="checkbox" <?= $item->status === 'closed' ? 'checked' : '' ?>>
+                                                    </td>
+                                                    <td>
+                                                        <button class="editBtn">Edit</button>
+                                                        <div class="saveCancelBlock" hidden>
+                                                            <button class="saveBtn">Save</button>
+                                                            <button class="cancelBtn">Cancel</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    <?php endif; ?>
                                 </div>
+
+                                <?php if (!empty($page_count) && $page_count > 1): ?>
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                            <?php for ($i = 1; $i <= $page_count; $i++): ?>
+                                                <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
+                                                    <?php $url = !empty($sort) ? "?sort={$sort}&page={$i}" : "?page={$i}"; ?>
+                                                    <a class="page-link" href="<?= $url; ?>"><?= $i; ?></a>
+                                                </li>
+                                            <?php endfor; ?>
+                                        </ul>
+                                    </nav>
+                                <?php endif; ?>
+
                             </div>
                         </div>
                     </div>

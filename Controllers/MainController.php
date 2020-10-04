@@ -34,7 +34,7 @@ class mainController
         $total = $task->total();
         $page_count = ceil($total / self::RECORD_LIMIT);
 
-        View::render('cms', array('title' => $title, 'user' => $user, 'page_count' => $page_count, 'data' => $data));
+        View::render('cms', array('title' => $title, 'user' => $user, 'page_count' => $page_count, 'data' => $data, 'page' => $page));
     }
 
     public function login()
@@ -66,5 +66,23 @@ class mainController
             // TODO : pretty error
             die();
         }
+    }
+
+    public function update()
+    {
+        extract($_POST);
+        $user = !empty($_SESSION['user']) ? $_SESSION['user'] : null;
+
+        $status = empty($status) ? 'open' : $status;
+
+        if (empty($id) || empty($text) || empty($user)) die();
+
+        $task = new Task();
+        $res = $task->update($id, $text, $status);
+
+        if ($res)
+            header('Location: /cms');
+
+        exit;
     }
 }
