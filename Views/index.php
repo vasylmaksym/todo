@@ -20,41 +20,47 @@
                                 <button class="add btn btn-primary font-weight-bold todo-list-add-btn mr-3">Add</button>
                             </div>
                             <div class="list-wrapper">
-                                <div class="">
-                                    <span class="mr-3">Sort by:</span>
-                                    <div class="btn-group" role="group" aria-label="Basic example">
-                                        <!--TODO: if selected add class act-->
-                                        <a href="?sort=name" data-sort="name" class="sortField mr-3">Name</a>
-                                        <a href="?sort=email" data-sort="email" class="sortField mr-3">Email</a>
-                                        <a href="?sort=status" data-sort="status" class=sortField">Status</a>
+                                <?php if (!empty($data)): $length = count($data); ?>
+                                    <div class="">
+                                        <span class="mr-3">Sort by:</span>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <!--TODO: if selected add class act-->
+                                            <a href="?sort=name" data-sort="name" class="sortField mr-3">Name</a>
+                                            <a href="?sort=email" data-sort="email" class="sortField mr-3">Email</a>
+                                            <a href="?sort=status" data-sort="status" class=sortField">Status</a>
+                                        </div>
                                     </div>
-                                </div>
-                                <ul class="d-flex flex-column-reverse todo-list">
-                                    <?php foreach ($data as $item): ?>
-                                        <li class="<?= $item['done'] ? 'completed' : ''; ?>">
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input class="checkbox" type="checkbox"
-                                                           disabled <?= $item['done'] ? 'checked' : '' ?>>
-                                                    <?= $item['name'] . " — " . $item['text']; ?>
-                                                    <i class="input-helper"></i>
-                                                </label>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
+                                    <ul class="d-flex flex-column todo-list">
+                                        <?php for ($i = 0; $i < $length; $i++): ?>
+                                            <li class="<?= $data[$i]->status === 'closed' ? 'completed' : ''; ?>">
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="checkbox" type="checkbox"
+                                                               disabled <?= $data[$i]->status === 'closed' ? 'checked' : '' ?>>
+                                                        <?= "{$data[$i]->name}({$data[$i]->email})" . " — " . $data[$i]->text; ?>
+                                                        <i class="input-helper"></i>
+                                                    </label>
+                                                </div>
+                                            </li>
+                                        <?php endfor; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p>Task List is empty :(</p>
+                                <?php endif; ?>
                             </div>
                         </form>
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination">
-                                <?php for ($i = 1; $i <= $page_count; $i++): ?>
-                                    <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
-                                        <?php $url = !empty($sort) ? "?sort={$sort}&page={$i}" : "?page={$i}"; ?>
-                                        <a class="page-link" href="<?= $url; ?>"><?= $i; ?></a>
-                                    </li>
-                                <?php endfor; ?>
-                            </ul>
-                        </nav>
+                        <?php if (!empty($page_count) && $page_count > 1): ?>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <?php for ($i = 1; $i <= $page_count; $i++): ?>
+                                        <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
+                                            <?php $url = !empty($sort) ? "?sort={$sort}&page={$i}" : "?page={$i}"; ?>
+                                            <a class="page-link" href="<?= $url; ?>"><?= $i; ?></a>
+                                        </li>
+                                    <?php endfor; ?>
+                                </ul>
+                            </nav>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

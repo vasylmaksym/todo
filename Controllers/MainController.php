@@ -52,9 +52,7 @@ class mainController
 
     public function create()
     {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $text = $_POST['text'];
+        extract($_POST);
 
         if (!empty($name) && !empty($email) && !empty($text)) {
             $task = new Task();

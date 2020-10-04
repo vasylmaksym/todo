@@ -8,6 +8,18 @@ class Task extends DB
 {
     protected $table = 'tasks';
 
+    protected $fields = array(
+        'name' => 'name',
+        'email' => 'email',
+        'text' => 'text',
+        'status' => array(
+            'open' => 'open',
+            'closed' => 'closed',
+            'deleted' => 'deleted'
+        )
+    );
+
+
     public function get($limit, $page, $sort = null)
     {
         $data = [];
@@ -23,7 +35,7 @@ class Task extends DB
                     $order_by = "ORDER BY email DESC";
                     break;
                 case 'status':
-                    $order_by = "ORDER BY done DESC";
+                    $order_by = "ORDER BY CASE WHEN status = '{$this->fields['status']['closed']}' THEN 1 ELSE 2 END";
                     break;
                 default:
                     $order_by = '';
@@ -31,11 +43,12 @@ class Task extends DB
             }
         }
 
-        $query = "SELECT id, name, text, done FROM {$this->table} {$order_by} LIMIT {$limit} OFFSET {$offset}";
+        $query = "SELECT `id`, `name`, `text`, `email`, `status` FROM {$this->table} WHERE `status` != '{$this->fields['status']['deleted']}' {$order_by} LIMIT {$limit} OFFSET {$offset}";
+
         $res = $this->connect()->query($query);
         if ($res->num_rows > 0) {
             while ($row = $res->fetch_assoc()) {
-                $data[] = $row;
+                $data[] = (object)$row;
             }
         }
         return $data;
@@ -51,7 +64,7 @@ class Task extends DB
 
     public function create($name, $email, $text)
     {
-        $query = "INSERT INTO {$this->table} (name, email, text, done) VALUES ('{$name}', '{$email}', '{$text}', false)";
+        $query = "INSERT INTO {$this->table} (name, email, text) VALUES ('{$name}', '{$email}', '{$text}')";
         return $this->connect()->query($query);
     }
 }
