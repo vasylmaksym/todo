@@ -9,6 +9,7 @@ class mainController
 {
 
     const PER_PAGE = 3;
+    const VALID_TEXT_REGEX = "/[^a-zA-Z0-9\s.,]/";
 
     public function index()
     {
@@ -63,8 +64,8 @@ class mainController
 
 
         if (!empty($name) && !empty($email) && !empty($text)) {
-            $name = strip_tags($name);
-            $text = strip_tags($text);
+            $name = preg_replace(self::VALID_TEXT_REGEX, "", $name);
+            $text = preg_replace(self::VALID_TEXT_REGEX, "", $text);
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 echo "E-mail is invalid!";
