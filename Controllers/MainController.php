@@ -41,8 +41,8 @@ class mainController
         $data = $task->get(self::PER_PAGE, $page);
         $total = $task->total();
         $page_count = ceil($total / self::PER_PAGE);
-
-        View::render('cms', array('title' => $title, 'user' => $user, 'page_count' => $page_count, 'data' => $data, 'page' => $page));
+        $status = $task->status;
+        View::render('cms', array('title' => $title, 'user' => $user, 'page_count' => $page_count, 'data' => $data, 'page' => $page, 'status' => $status));
     }
 
     public function login()
@@ -53,9 +53,11 @@ class mainController
             if ($login === 'admin' && $password === '123') {
                 $_SESSION['user'] = $login;
                 header('Location: /cms');
+                die;
             }
         }
-        die();
+        echo "Invalid login or password!!";
+        die;
     }
 
     public function create()
@@ -91,16 +93,20 @@ class mainController
         extract($_POST);
         $user = !empty($_SESSION['user']) ? $_SESSION['user'] : null;
 
-        $status = empty($status) ? 'open' : $status;
 
-        if (empty($id) || empty($text) || empty($user)) die();
+        if (empty($id) || empty($text) || empty($user) || empty($status)) {
+            echo 'Invalid data!';
+            die;
+        }
 
         $task = new Task();
         $res = $task->update($id, $text, $status);
 
-        if ($res)
+        if ($res) {
             header('Location: /cms');
-
-        exit;
+            die;
+        }
+        echo "Update error!";
+        die;
     }
 }

@@ -21,6 +21,11 @@ class Task extends DB
 
     protected $orders = array('asc', 'desc');
 
+    public $status = array(
+        'open',
+        'closed',
+        'deleted'
+    );
 
     public function get($limit, $page, $sort = null, $order = 'asc')
     {
