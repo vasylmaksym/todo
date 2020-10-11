@@ -37,9 +37,9 @@ class mainController
 
         $task = new Task();
         $page = !empty($_GET['page']) ? $_GET['page'] : 1;
-        $data = $task->get(self::RECORD_LIMIT, $page);
+        $data = $task->get(self::PER_PAGE, $page);
         $total = $task->total();
-        $page_count = ceil($total / self::RECORD_LIMIT);
+        $page_count = ceil($total / self::PER_PAGE);
 
         View::render('cms', array('title' => $title, 'user' => $user, 'page_count' => $page_count, 'data' => $data, 'page' => $page));
     }
