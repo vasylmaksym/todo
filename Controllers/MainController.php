@@ -9,7 +9,7 @@ class mainController
 {
 
     const PER_PAGE = 3;
-    const VALID_TEXT_REGEX = "/[^a-zA-Z0-9\s.,]/";
+    const VALID_TEXT_REGEX = "/[^а-яёА-ЯЁa-zA-Z0-9\s.,]/u";
 
     public function index()
     {
