@@ -19,35 +19,42 @@
                                        placeholder="What do you need to do today?" required>
                                 <button class="add btn btn-primary font-weight-bold todo-list-add-btn mr-3">Add</button>
                             </div>
-                            <div class="list-wrapper">
-                                <?php if (!empty($data)): $length = count($data); ?>
-                                    <div class="">
-                                        <span class="mr-3">Sort by:</span>
-                                        <div class="btn-group" role="group" aria-label="Basic example">
-                                            <!--TODO: if selected add class act-->
-                                            <a href="?sort=name" data-sort="name" class="sortField mr-3">Name</a>
-                                            <a href="?sort=email" data-sort="email" class="sortField mr-3">Email</a>
-                                            <a href="?sort=status" data-sort="status" class=sortField">Status</a>
-                                        </div>
-                                    </div>
-                                    <ul class="d-flex flex-column todo-list">
-                                        <?php for ($i = 0; $i < $length; $i++): ?>
-                                            <li class="<?= $data[$i]->status === 'closed' ? 'completed' : ''; ?>">
-                                                <div class="form-check">
-                                                    <label class="form-check-label">
-                                                        <input class="checkbox" type="checkbox"
-                                                               disabled <?= $data[$i]->status === 'closed' ? 'checked' : '' ?>>
-                                                        <?= "{$data[$i]->name}({$data[$i]->email})" . " — " . $data[$i]->text; ?>
-                                                        <i class="input-helper"></i>
-                                                    </label>
-                                                </div>
-                                            </li>
-                                        <?php endfor; ?>
-                                    </ul>
-                                <?php else: ?>
-                                    <p>Task List is empty :(</p>
-                                <?php endif; ?>
+
+
+                            <div class="">
+                                <span class="mr-3">Sort by:</span>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="?sort=name&order=<?= $sort === 'name' ? ($order === 'asc' ? 'desc' : 'asc') : 'asc'; ?>"
+                                       class="mr-3"
+                                       style="<?= $sort === 'name' ? 'color: red' : ''; ?>">Name</a>
+                                    <a href="?sort=email&order=<?= $sort === 'email' ? ($order === 'asc' ? 'desc' : 'asc') : 'asc'; ?>"
+                                       class="mr-3"
+                                       style="<?= $sort === 'email' ? 'color: red' : ''; ?>">Email</a>
+                                    <a href="?sort=status&order=<?= $sort === 'status' ? ($order === 'asc' ? 'desc' : 'asc') : 'asc'; ?>"
+                                       style="<?= $sort === 'status' ? 'color: red' : ''; ?>">Status</a>
+                                </div>
                             </div>
+
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Text</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($data as $key => $item): ?>
+                                    <tr style="text-decoration: <?= $item->status === 'closed' ? 'line-through' : 'none'; ?>">
+                                        <th scope="row"><?= (($page - 1) * 3) + ($key + 1); ?></th>
+                                        <td><?= $item->name ?></td>
+                                        <td><?= $item->text ?></td>
+                                        <td><?= $item->status; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </form>
                         <?php if (!empty($page_count) && $page_count > 1): ?>
                             <nav aria-label="Page navigation example">

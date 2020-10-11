@@ -19,23 +19,32 @@ class Task extends DB
         )
     );
 
+    protected $orders = array('asc', 'desc');
 
-    public function get($limit, $page, $sort = null)
+
+    public function get($limit, $page, $sort = null, $order = 'asc')
     {
         $data = [];
         $offset = ($page - 1) * $limit;
+
+        $order = strtolower($order);
+
+        if (!in_array($order, $this->orders)) {
+            echo 'Invalid sort type!';
+            die;
+        }
 
         $order_by = '';
         if (!empty($sort)) {
             switch ($sort) {
                 case 'name':
-                    $order_by = "ORDER BY name DESC";
+                    $order_by = "ORDER BY name {$order}";
                     break;
                 case 'email':
-                    $order_by = "ORDER BY email DESC";
+                    $order_by = "ORDER BY email {$order}";
                     break;
                 case 'status':
-                    $order_by = "ORDER BY CASE WHEN status = '{$this->fields['status']['closed']}' THEN 1 ELSE 2 END";
+                    $order_by = "ORDER BY CASE WHEN status = '{$this->fields['status']['closed']}' THEN 1 ELSE 2 END {$order}";
                     break;
                 default:
                     $order_by = '';
