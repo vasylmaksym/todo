@@ -27,7 +27,7 @@ $(document).ready(function () {
                 var parseRes = JSON.parse(res);
                 alert(parseRes.msg);
                 if (parseRes.success)
-                    $('.jsForm').find("input[type=text], textarea").val("");
+                    location.reload();
             }
         });
     });

@@ -63,7 +63,7 @@
 
                                 <div class="modal fade" id="myModal" role="dialog">
                                     <div class="modal-dialog">
-                                        <form action="/update" method="post" class="modal-content">
+                                        <form action="/update" method="post" class="modal-content jsForm">
                                             <input type="hidden" name="id" class="idInput" value="">
                                             <div class="modal-header">
                                                 <h4 class="modal-title">Edit</h4>
