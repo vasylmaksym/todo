@@ -129,6 +129,7 @@ class mainController
             }
 
             $task = new Task();
+            $text = preg_replace(self::VALID_TEXT_REGEX, "", $text ?? '');
             if (empty($text) || empty($status) || !in_array($status, $task->status)) {
                 $this->send_json_res(false, 'Неверные входные данные!');
             }
@@ -136,6 +137,8 @@ class mainController
             $update = true;
         } else {
             // create
+            $name = preg_replace(self::VALID_TEXT_REGEX, "", $name ?? '');
+            $text = preg_replace(self::VALID_TEXT_REGEX, "", $text ?? '');
             if (empty($email) || empty($name) || empty($text)) {
                 $this->send_json_res(false, 'Заполните все поля что бы создать задачу!');
             }
