@@ -120,27 +120,24 @@ class mainController
             // edit
             $user = $this->get_user();
             if (empty($user)) {
-                echo "У вас нет доступа для выполнения данной операции!";
+                header("Location: /cms");
                 die;
             }
 
             $task = new Task();
             if (empty($text) || empty($status) || !in_array($status, $task->status)) {
-                echo "invalid data!";
-                die;
+                $this->send_json_res(false, 'Неверные входные данные!');
             }
             $res = $task->update($id, $text, $status);
             $update = true;
         } else {
             // create
             if (empty($email) || empty($name) || empty($text)) {
-                echo "Invalid data!";
-                die;
+                $this->send_json_res(false, 'Заполните все поля что бы создать задачу!');
             }
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                echo "E-mail is invalid!";
-                die;
+                $this->send_json_res(false, 'Емейл указан неверно!');
             }
 
             $task = new Task();
@@ -148,10 +145,9 @@ class mainController
         }
 
         if ($res) {
-            $location = $update ? '/cms' : '/';
-            header("Location: {$location}");
+            $this->send_json_res(true, !$update ? 'Спасибо за вашу задачу!' : 'Задачв успешно отредактирована!');
         } else {
-            echo "Error!";
+            $this->send_json_res(false);
         }
         die;
     }
@@ -185,5 +181,14 @@ class mainController
         }
 
         return $user;
+    }
+
+    protected function send_json_res($success, $msg = 'Ошибка!')
+    {
+        echo json_encode([
+            'success' => $success,
+            'msg' => $msg
+        ]);
+        die;
     }
 }

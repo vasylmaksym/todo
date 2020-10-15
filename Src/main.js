@@ -13,6 +13,23 @@ $(document).ready(function () {
         } else {
             alert('Invalid record!');
         }
-
     });
+
+    $(document).on('submit', '.jsForm', function (e) {
+        e.preventDefault();
+        var data = $(this).serialize();
+
+        $.ajax({
+            type: "POST",
+            url: $(this).attr('action'),
+            data: data,
+            success: function (res) {
+                var parseRes = JSON.parse(res);
+                alert(parseRes.msg);
+                if (parseRes.success)
+                    $('.jsForm').find("input[type=text], textarea").val("");
+            }
+        });
+    });
+
 });

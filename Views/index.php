@@ -9,7 +9,7 @@
             <div class="row container d-flex justify-content-center">
                 <div class="col-md-12">
                     <div class="card px-3">
-                        <form action="/create" method="post" class="card-body">
+                        <form action="/create" method="post" class="card-body jsForm">
                             <h4 class="card-title">Todo</h4>
                             <div class="add-items d-flex">
                                 <input name="name" type="text" class="form-control todo-list-input mr-3"
