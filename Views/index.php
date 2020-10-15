@@ -1,6 +1,9 @@
 <?php include 'includes/header.php'; ?>
 
 <main id="app">
+
+    <?php include 'includes/nav.php'; ?>
+
     <div class="page-content page-container" id="page-content">
         <div class="padding">
             <div class="row container d-flex justify-content-center">
@@ -25,29 +28,27 @@
                                     <span class="mr-3">Sort by:</span>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <a href="?sort=name&order=<?= $sort === 'name' ? ($order === 'asc' ? 'desc' : 'asc') : 'asc'; ?>"
-                                           class="mr-3"
-                                           style="<?= $sort === 'name' ? 'color: red' : ''; ?>">Name</a>
+                                           class="mr-3 <?= $sort === 'name' ? 'act-link' : '' ?>">Name</a>
                                         <a href="?sort=email&order=<?= $sort === 'email' ? ($order === 'asc' ? 'desc' : 'asc') : 'asc'; ?>"
-                                           class="mr-3"
-                                           style="<?= $sort === 'email' ? 'color: red' : ''; ?>">Email</a>
+                                           class="mr-3 <?= $sort === 'email' ? 'act-link' : '' ?>">Email</a>
                                         <a href="?sort=status&order=<?= $sort === 'status' ? ($order === 'asc' ? 'desc' : 'asc') : 'asc'; ?>"
-                                           style="<?= $sort === 'status' ? 'color: red' : ''; ?>">Status</a>
+                                           class="<?= $sort === 'status' ? 'act-link' : ''; ?>">Status</a>
                                     </div>
                                 </div>
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th scope="col">#</th>
                                         <th scope="col">Name</th>
-                                        <th scope="col">Text</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Body</th>
                                         <th scope="col">Status</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <?php foreach ($data as $key => $item): ?>
-                                        <tr style="text-decoration: <?= $item->status === 'closed' ? 'line-through' : 'none'; ?>">
-                                            <th scope="row"><?= (($page - 1) * 3) + ($key + 1); ?></th>
+                                        <tr class="<?= $item->status === 'closed' ? 'closed' : 'act'; ?>">
                                             <td><?= $item->name ?></td>
+                                            <td><?= $item->email ?></td>
                                             <td><?= $item->text ?></td>
                                             <td><?= $item->status; ?></td>
                                         </tr>
@@ -63,7 +64,7 @@
                                 <ul class="pagination">
                                     <?php for ($i = 1; $i <= $page_count; $i++): ?>
                                         <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
-                                            <?php $url = !empty($sort) ? "?sort={$sort}&page={$i}" : "?page={$i}"; ?>
+                                            <?php $url = !empty($current_sort) ? "?page={$i}&{$current_sort}" : "?page={$i}"; ?>
                                             <a class="page-link" href="<?= $url; ?>"><?= $i; ?></a>
                                         </li>
                                     <?php endfor; ?>

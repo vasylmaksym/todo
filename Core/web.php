@@ -6,8 +6,9 @@ Router::get('/', 'MainController@index');
 
 Router::get('/cms', 'MainController@cms');
 
-Router::post('/create', 'MainController@create');
-Router::post('/update', 'MainController@update');
+Router::post('/create', 'MainController@create_or_update');
+Router::post('/update', 'MainController@create_or_update');
 
 Router::post('/login', 'MainController@login');
+Router::post('/logout', 'MainController@logout');
 

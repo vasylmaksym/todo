@@ -8,66 +8,135 @@ use Models\Task;
 class mainController
 {
 
-    const PER_PAGE = 3;
     const VALID_TEXT_REGEX = "/[^а-яёА-ЯЁa-zA-Z0-9\s.,]/u";
+    const ADMIN_LOGIN = 'admin';
+    const ADMIN_PASS = '123';
 
+    /**
+     * @route GET '/'
+     */
     public function index()
     {
         $task = new Task();
         $page = !empty($_GET['page']) ? $_GET['page'] : 1;
         $sort = !empty($_GET['sort']) ? $_GET['sort'] : null;
         $order = !empty($_GET['order']) ? $_GET['order'] : 'asc';
+
         $title = 'ToDo - Home Page';
-        $data = $task->get(self::PER_PAGE, $page, $sort, $order);
-        $total = $task->total();
-        $page_count = ceil($total / self::PER_PAGE);
+
+        [$page_count, $current_sort, $json_data] = $task->get($page, $sort, $order);
+
+        if ($page > $page_count)
+            $this->not_found();
 
         View::render('index', array('title' => $title,
-            'data' => $data,
-            'page_count' => $page_count,
-            'sort' => $sort,
-            'order' => $order,
-            'per_page' => self::PER_PAGE,
-            'page' => $page));
+                'data' => json_decode($json_data)->data ?? [],
+                'page_count' => $page_count,
+                'current_sort' => $current_sort,
+                'sort' => $sort,
+                'order' => $order,
+                'page' => $page,
+                'user' => $this->get_user()
+            )
+        );
     }
 
+    /**
+     * @route GET '/cms'
+     */
     public function cms()
     {
-        $title = 'CMS';
-        $user = !empty($_SESSION['user']) ? $_SESSION['user'] : null;
+        $user = $this->get_user();
 
-        $task = new Task();
-        $page = !empty($_GET['page']) ? $_GET['page'] : 1;
-        $data = $task->get(self::PER_PAGE, $page);
-        $total = $task->total();
-        $page_count = ceil($total / self::PER_PAGE);
-        $status = $task->status;
-        View::render('cms', array('title' => $title, 'user' => $user, 'page_count' => $page_count, 'data' => $data, 'page' => $page, 'status' => $status));
+        if (empty($user)) {
+            $title = 'ToDo - Login';
+            View::render('login', array('title' => $title));
+        } else {
+            $task = new Task();
+            $page = !empty($_GET['page']) ? $_GET['page'] : 1;
+            $sort = !empty($_GET['sort']) ? $_GET['sort'] : null;
+            $order = !empty($_GET['order']) ? $_GET['order'] : 'asc';
+
+            $title = 'ToDo - CMS';
+
+            [$page_count, $current_sort, $json_data] = $task->get($page, $sort, $order);
+
+            if ($page > $page_count)
+                $this->not_found();
+
+            View::render('cms',
+                array('title' => $title,
+                    'data' => json_decode($json_data)->data ?? [],
+                    'page_count' => $page_count,
+                    'current_sort' => $current_sort,
+                    'sort' => $sort,
+                    'order' => $order,
+                    'page' => $page,
+                    'status' => $task->status,
+                    'user' => $user
+                )
+            );
+        }
     }
 
+    /**
+     * @route POST '/login'
+     */
     public function login()
     {
         extract($_POST);
 
         if (!empty($login) && !empty($password)) {
-            if ($login === 'admin' && $password === '123') {
-                $_SESSION['user'] = $login;
+            if ($login === self::ADMIN_LOGIN && $password === self::ADMIN_PASS) {
+                $data = base64_encode("{$login};{$password}");
+                $_SESSION['user'] = $data;
                 header('Location: /cms');
                 die;
             }
         }
+
         echo "Invalid login or password!!";
         die;
     }
 
-    public function create()
+    /**
+     * @route POST '/logout'
+     */
+    public function logout()
+    {
+        unset($_SESSION['user']);
+        header('Location: /');
+        die;
+    }
+
+    /**
+     * @route POST ['/create', '/update']
+     */
+    public function create_or_update()
     {
         extract($_POST);
+        $update = false;
+        if (!empty($id)) {
+            // edit
+            $user = $this->get_user();
+            if (empty($user)) {
+                echo "У вас нет доступа для выполнения данной операции!";
+                die;
+            }
 
-
-        if (!empty($name) && !empty($email) && !empty($text)) {
-            $name = preg_replace(self::VALID_TEXT_REGEX, "", $name);
-            $text = preg_replace(self::VALID_TEXT_REGEX, "", $text);
+            $task = new Task();
+            if (empty($text) || empty($status) || !in_array($status, $task->status)) {
+                echo "invalid data!";
+                die;
+            }
+            $res = $task->update($id, $text, $status);
+            $update = true;
+        } else {
+            // create
+            if (empty($email) || empty($name) || empty($text)) {
+                echo "Invalid data!";
+                die;
+            }
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 echo "E-mail is invalid!";
@@ -76,37 +145,45 @@ class mainController
 
             $task = new Task();
             $res = $task->create($name, $email, $text);
-
-            if ($res) {
-                header('Location: /');
-            }
-            die;
-        } else {
-            echo 'Invalid data!';
-            // TODO : pretty error
-            die;
         }
-    }
-
-    public function update()
-    {
-        extract($_POST);
-        $user = !empty($_SESSION['user']) ? $_SESSION['user'] : null;
-
-
-        if (empty($id) || empty($text) || empty($user) || empty($status)) {
-            echo 'Invalid data!';
-            die;
-        }
-
-        $task = new Task();
-        $res = $task->update($id, $text, $status);
 
         if ($res) {
-            header('Location: /cms');
-            die;
+            $location = $update ? '/cms' : '/';
+            header("Location: {$location}");
+        } else {
+            echo "Error!";
         }
-        echo "Update error!";
         die;
+    }
+
+
+    /**
+     * 404 error
+     */
+    protected function not_found()
+    {
+        http_response_code(404);
+        die;
+    }
+
+    /**
+     * Get user
+     * @return string|null
+     */
+    protected function get_user()
+    {
+        $user = !empty($_SESSION['user']) ? $_SESSION['user'] : null;
+
+        if (empty($user))
+            return null;
+
+        $decode_user = explode(';', base64_decode($user));
+
+        if ($decode_user[0] !== self::ADMIN_LOGIN || $decode_user[1] !== self::ADMIN_PASS) {
+            unset($_SESSION['user']);
+            return null;
+        }
+
+        return $user;
     }
 }

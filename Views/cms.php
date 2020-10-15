@@ -1,7 +1,9 @@
 <?php include 'includes/header.php'; ?>
 
-<?php if (!empty($user)): ?>
     <main id="app">
+
+        <?php include 'includes/nav.php'; ?>
+
         <div class="page-content page-container" id="page-content">
             <div class="padding">
                 <div class="row container d-flex justify-content-center">
@@ -109,7 +111,4 @@
             </div>
         </div>
     </main>
-<?php else:
-    include 'includes/login.php';
-endif;
-include 'includes/footer.php'; ?>
+<?php include 'includes/footer.php';
