@@ -132,6 +132,7 @@ class Task extends DB
      * @param $id
      * @param $text
      * @param $status
+     * @param $edit
      * @return bool|\mysqli_result
      */
     public function update($id, $text, $status, $edit = true)
