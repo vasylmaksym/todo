@@ -5,5 +5,6 @@ CREATE TABLE
   `email`  VARCHAR(70)                        NOT NULL,
   `text`   VARCHAR(200)                       NOT NULL,
   `status` ENUM ('open', 'closed', 'deleted') NOT NULL DEFAULT 'open',
+  `edit`   BOOLEAN                            NOT NULL DEFAULT false,
   PRIMARY KEY (`id`)
 )

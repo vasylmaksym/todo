@@ -26,6 +26,8 @@ class mainController
 
         [$page_count, $current_sort, $json_data] = $task->get($page, $sort, $order);
 
+        $page_count = empty($page_count) ? 1 : $page_count;
+
         if ($page > $page_count)
             $this->not_found();
 
@@ -145,7 +147,7 @@ class mainController
         }
 
         if ($res) {
-            $this->send_json_res(true, !$update ? 'Спасибо за вашу задачу!' : 'Задачв успешно отредактирована!');
+            $this->send_json_res(true, !$update ? 'Спасибо за вашу задачу!' : 'Задача успешно отредактирована!');
         } else {
             $this->send_json_res(false);
         }

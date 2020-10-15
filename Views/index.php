@@ -42,15 +42,17 @@
                                         <th scope="col">Email</th>
                                         <th scope="col">Body</th>
                                         <th scope="col">Status</th>
+                                        <th scope="col">Edited by admin</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <?php foreach ($data as $key => $item): ?>
-                                        <tr class="<?= $item->status === 'closed' ? 'closed' : 'act'; ?>">
+                                        <tr>
                                             <td><?= $item->name ?></td>
                                             <td><?= $item->email ?></td>
                                             <td><?= $item->text ?></td>
                                             <td><?= $item->status; ?></td>
+                                            <td><?= $item->edit ? '+' : '-'; ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                     </tbody>

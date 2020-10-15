@@ -29,7 +29,8 @@ class Task extends DB
             'open' => 'open',
             'closed' => 'closed',
             'deleted' => 'deleted'
-        )
+        ),
+        'edit' => 'edit'
     );
 
     /**
@@ -99,7 +100,8 @@ class Task extends DB
                             'name', `name`,
                             'email', `email`,
                             'text', `text`,
-                            'status', `status`
+                            'status', `status`,
+                            'edit', `edit`
                           ) `data`
                         FROM `tasks`
                         WHERE status != '{$this->fields['status']['deleted']}' {$order_by} limit {$this->per_page} OFFSET {$offset}
@@ -132,9 +134,9 @@ class Task extends DB
      * @param $status
      * @return bool|\mysqli_result
      */
-    public function update($id, $text, $status)
+    public function update($id, $text, $status, $edit = true)
     {
-        $query = "UPDATE `{$this->table}` SET `text` = '{$text}', `status` = '{$status}' WHERE `id` = '{$id}'";
+        $query = "UPDATE `{$this->table}` SET `text` = '{$text}', `status` = '{$status}', `edit` = '{$edit}' WHERE `id` = '{$id}'";
         return $this->connect()->query($query);
     }
 }
